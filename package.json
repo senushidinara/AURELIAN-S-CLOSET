@@ -9,11 +9,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@datadog/datadog-api-client": "^1.48.0",
+    "@google/genai": "^1.33.0",
+    "elevenlabs-js": "^1.2.6",
+    "kafkajs": "^2.2.4",
+    "lucide-react": "^0.561.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "@google/genai": "^1.33.0",
-    "recharts": "^3.5.1",
-    "lucide-react": "^0.561.0"
+    "recharts": "^3.5.1"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

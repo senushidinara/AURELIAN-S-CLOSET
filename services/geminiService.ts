@@ -1,5 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { OutfitParams, OutfitSpec, CognitiveAnalysis } from '../types';
+import { datadogMonitor } from './datadogService';
+import { streamingPipeline } from './confluentService';
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
@@ -11,6 +13,7 @@ const modelImage = 'gemini-2.5-flash-image';
  * Step 1: Generate the Structured "FIBO" JSON Spec based on user parameters.
  */
 export const generateOutfitSpecification = async (params: OutfitParams): Promise<OutfitSpec> => {
+  const startTime = Date.now();
   const prompt = `
     You are the "Aurelian Engine", a high-precision fashion generation system.
     Create a detailed structured JSON specification for an outfit based on these parameters:
@@ -85,11 +88,38 @@ export const generateOutfitSpecification = async (params: OutfitParams): Promise
     });
 
     if (response.text) {
-      return JSON.parse(response.text) as OutfitSpec;
+      const spec = JSON.parse(response.text) as OutfitSpec;
+      
+      // Track telemetry
+      const generationTime = Date.now() - startTime;
+      await datadogMonitor.streamLLMTelemetry({
+        input_tokens: Math.ceil(prompt.length / 4),
+        output_tokens: Math.ceil(response.text.length / 4),
+        generation_ms: generationTime,
+        model: modelFlash,
+        camera_angle: spec.camera?.angle,
+        lighting: spec.camera?.lighting,
+        success: true,
+        endpoint: 'outfit_specification'
+      });
+      
+      return spec;
     }
     throw new Error("No JSON returned");
   } catch (error) {
     console.error("Spec Generation Error:", error);
+    
+    // Track error
+    const generationTime = Date.now() - startTime;
+    await datadogMonitor.streamLLMTelemetry({
+      input_tokens: Math.ceil(prompt.length / 4),
+      output_tokens: 0,
+      generation_ms: generationTime,
+      model: modelFlash,
+      success: false,
+      endpoint: 'outfit_specification'
+    });
+    
     throw error;
   }
 };
