@@ -9,6 +9,7 @@ import { streamingPipeline, KAFKA_TOPICS, OutfitGenerationEvent } from './conflu
 import { voiceAssistant, VoiceResponse } from './elevenLabsService';
 import { generateOutfitImage } from './geminiService';
 import { OutfitParams } from '../types';
+import { AI_MODELS, CHARS_PER_TOKEN } from './serviceConstants';
 
 export interface UnifiedRequest {
   user_id: string;
@@ -278,7 +279,7 @@ export class UnifiedAIFashionPlatform {
       input_tokens: inputTokens,
       output_tokens: outputTokens,
       generation_ms: processingTime,
-      model: 'gemini-2.5-flash',
+      model: AI_MODELS.GEMINI_FLASH,
       camera_angle: outfitSpec?.camera?.angle,
       lighting: outfitSpec?.camera?.lighting,
       success: success,
@@ -293,7 +294,7 @@ export class UnifiedAIFashionPlatform {
    */
   private estimateTokens(text: string): number {
     // Rough estimation: ~4 characters per token
-    return Math.ceil(text.length / 4);
+    return Math.ceil(text.length / CHARS_PER_TOKEN);
   }
 
   /**
@@ -317,7 +318,7 @@ export class UnifiedAIFashionPlatform {
    * Generate unique request ID
    */
   private generateRequestId(): string {
-    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   /**

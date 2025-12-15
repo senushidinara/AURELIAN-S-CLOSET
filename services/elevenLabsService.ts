@@ -5,9 +5,10 @@
 
 import { GoogleGenAI } from "@google/genai";
 import { FIBOOutfitSpec } from './fiboService';
+import { AI_MODELS, VOICE_IDS, DEFAULT_VOICE_SETTINGS } from './serviceConstants';
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-const modelFlash = 'gemini-2.5-flash';
+const modelFlash = AI_MODELS.GEMINI_FLASH;
 
 export interface VoiceSettings {
   stability: number;
@@ -70,13 +71,8 @@ export class VoiceFashionAssistant {
 
     // Step 3: Generate voice response
     const voiceResponse = await this.textToSpeech(responseText, {
-      voice_id: 'rachel',
-      voice_settings: {
-        stability: 0.75,
-        similarity_boost: 0.85,
-        style: 0.6,
-        use_speaker_boost: true
-      }
+      voice_id: VOICE_IDS.RACHEL,
+      voice_settings: DEFAULT_VOICE_SETTINGS
     });
 
     // Step 4: Update conversation history
@@ -91,12 +87,13 @@ export class VoiceFashionAssistant {
   async speechToText(audio: Buffer): Promise<TranscriptionResult> {
     if (!this.enabled) {
       console.log('[ELEVENLABS SIMULATION] Would transcribe audio');
-      return {
+      const mockResponse: TranscriptionResult = {
         text: 'Mock transcription',
         language: 'en',
         confidence: 0.95,
         speaker_diarization: true
       };
+      return mockResponse;
     }
 
     // Simulate ElevenLabs speech-to-text API call

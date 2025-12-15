@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { OutfitParams } from '../types';
+import { AI_MODELS } from './serviceConstants';
 
 /**
  * FIBO (Fashion Intelligence with Balanced Optimization) Service
@@ -7,7 +8,7 @@ import { OutfitParams } from '../types';
  */
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
-const modelFlash = 'gemini-2.5-flash';
+const modelFlash = AI_MODELS.GEMINI_FLASH;
 
 export interface FIBOParameters {
   prompt: string;

@@ -2,12 +2,13 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { OutfitParams, OutfitSpec, CognitiveAnalysis } from '../types';
 import { datadogMonitor } from './datadogService';
 import { streamingPipeline } from './confluentService';
+import { AI_MODELS, CHARS_PER_TOKEN } from './serviceConstants';
 
 // Initialize Gemini Client
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
-const modelFlash = 'gemini-2.5-flash';
-const modelImage = 'gemini-2.5-flash-image';
+const modelFlash = AI_MODELS.GEMINI_FLASH;
+const modelImage = AI_MODELS.GEMINI_FLASH_IMAGE;
 
 /**
  * Step 1: Generate the Structured "FIBO" JSON Spec based on user parameters.
@@ -93,8 +94,8 @@ export const generateOutfitSpecification = async (params: OutfitParams): Promise
       // Track telemetry
       const generationTime = Date.now() - startTime;
       await datadogMonitor.streamLLMTelemetry({
-        input_tokens: Math.ceil(prompt.length / 4),
-        output_tokens: Math.ceil(response.text.length / 4),
+        input_tokens: Math.ceil(prompt.length / CHARS_PER_TOKEN),
+        output_tokens: Math.ceil(response.text.length / CHARS_PER_TOKEN),
         generation_ms: generationTime,
         model: modelFlash,
         camera_angle: spec.camera?.angle,
@@ -112,7 +113,7 @@ export const generateOutfitSpecification = async (params: OutfitParams): Promise
     // Track error
     const generationTime = Date.now() - startTime;
     await datadogMonitor.streamLLMTelemetry({
-      input_tokens: Math.ceil(prompt.length / 4),
+      input_tokens: Math.ceil(prompt.length / CHARS_PER_TOKEN),
       output_tokens: 0,
       generation_ms: generationTime,
       model: modelFlash,

@@ -286,7 +286,13 @@ export class DatadogObservability {
    * Calculate business impact
    */
   private async calculateBusinessImpact(): Promise<string> {
-    return "Moderate - 42 users experiencing degraded generation quality. Estimated revenue impact: $320/hour";
+    const affectedUsers = await this.getAffectedUserCount();
+    const avgRevenuePerUser = 7.5; // Average revenue per user per hour
+    const estimatedImpact = affectedUsers * avgRevenuePerUser;
+    
+    const severity = estimatedImpact > 500 ? 'High' : estimatedImpact > 200 ? 'Moderate' : 'Low';
+    
+    return `${severity} - ${affectedUsers} users experiencing degraded generation quality. Estimated revenue impact: $${estimatedImpact.toFixed(0)}/hour`;
   }
 
   /**
