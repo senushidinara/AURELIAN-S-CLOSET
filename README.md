@@ -48,7 +48,7 @@ We don't just ask for "a nice dress". We construct a **Structured Visual Matrix*
 }
 ```
 
-![Interface](https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=1000&auto=format&fit=crop)
+![IMG_4130](https://github.com/user-attachments/assets/3b67194c-37db-43e2-a511-c1367852e5ca)
 
 </details>
 
@@ -178,7 +178,7 @@ classDiagram
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/yourusername/aurelians-closet.git
+    git clone https://github.com/senushidinara/aurelians-closet.git
     ```
 
 2.  **Install Dependencies**
