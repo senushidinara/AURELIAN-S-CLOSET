@@ -198,7 +198,7 @@ classDiagram
 
 ---
 
-## 🏆 **Why This Wins**
+## 🏆 **Why This **
 
 | Feature | Description | Impact |
 | :--- | :--- | :--- |
