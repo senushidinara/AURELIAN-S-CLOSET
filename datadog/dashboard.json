@@ -1,0 +1,692 @@
+{
+  "title": "Aurelian's Closet - AI Fashion Platform Observability",
+  "description": "Comprehensive monitoring dashboard for AI-powered fashion generation with Vertex AI/Gemini integration",
+  "layout_type": "ordered",
+  "is_read_only": false,
+  "notify_list": [
+    "ai-team@company.com"
+  ],
+  "template_variables": [
+    {
+      "name": "environment",
+      "prefix": "env",
+      "available_values": ["production", "staging", "development"],
+      "default": "production"
+    },
+    {
+      "name": "model",
+      "prefix": "model",
+      "available_values": ["gemini-2.5-flash", "gemini-pro"],
+      "default": "*"
+    }
+  ],
+  "widgets": [
+    {
+      "id": 1,
+      "definition": {
+        "type": "note",
+        "content": "# 🏛️ Aurelian's Closet - AI Observability Dashboard\n\nComprehensive monitoring for FIBO (Structured Visual Control) outfit generation powered by Vertex AI/Gemini.\n\n**Key Metrics:**\n- LLM Performance & Token Usage\n- Application Health & SLOs\n- Quality Scores & Business Metrics\n- Detection Rules & Incidents\n\n**Organization:** aurelians-closet-datadog\n\n---\n*Last Updated: 2025-12-22*",
+        "background_color": "gray",
+        "font_size": "14",
+        "text_align": "left",
+        "vertical_align": "top",
+        "show_tick": false,
+        "tick_pos": "50%",
+        "tick_edge": "bottom",
+        "has_padding": true
+      },
+      "layout": {
+        "x": 0,
+        "y": 0,
+        "width": 12,
+        "height": 2
+      }
+    },
+    {
+      "id": 2,
+      "definition": {
+        "type": "note",
+        "content": "## 📊 Section 1: LLM Performance Metrics\n\nReal-time monitoring of Vertex AI/Gemini generation performance",
+        "background_color": "blue",
+        "font_size": "16",
+        "text_align": "center",
+        "show_tick": true,
+        "tick_pos": "50%",
+        "tick_edge": "bottom"
+      },
+      "layout": {
+        "x": 0,
+        "y": 2,
+        "width": 12,
+        "height": 1
+      }
+    },
+    {
+      "id": 3,
+      "definition": {
+        "type": "timeseries",
+        "title": "FIBO Generation Latency (ms)",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "avg:fibo.generation.duration{application:aurelians_closet,$environment,$model} by {camera_angle}",
+            "display_type": "line",
+            "style": {
+              "palette": "dog_classic",
+              "line_type": "solid",
+              "line_width": "normal"
+            }
+          }
+        ],
+        "yaxis": {
+          "scale": "linear",
+          "label": "Latency (ms)",
+          "include_zero": true,
+          "min": "auto",
+          "max": "auto"
+        },
+        "markers": [
+          {
+            "value": "y = 3000",
+            "display_type": "warning dashed",
+            "label": "Warning Threshold"
+          },
+          {
+            "value": "y = 5000",
+            "display_type": "error dashed",
+            "label": "Critical Threshold"
+          }
+        ],
+        "legend_size": "0"
+      },
+      "layout": {
+        "x": 0,
+        "y": 3,
+        "width": 6,
+        "height": 3
+      }
+    },
+    {
+      "id": 4,
+      "definition": {
+        "type": "query_value",
+        "title": "Total Vertex AI Token Usage (24h)",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "sum:vertexai.tokens.input{application:aurelians_closet,$environment} + sum:vertexai.tokens.output{application:aurelians_closet,$environment}",
+            "aggregator": "sum"
+          }
+        ],
+        "autoscale": true,
+        "custom_unit": "tokens",
+        "precision": 0
+      },
+      "layout": {
+        "x": 6,
+        "y": 3,
+        "width": 3,
+        "height": 3
+      }
+    },
+    {
+      "id": 5,
+      "definition": {
+        "type": "query_value",
+        "title": "Estimated Token Cost (24h)",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "(sum:vertexai.tokens.input{application:aurelians_closet,$environment} * 0.00001) + (sum:vertexai.tokens.output{application:aurelians_closet,$environment} * 0.00003)",
+            "aggregator": "avg"
+          }
+        ],
+        "autoscale": true,
+        "custom_unit": "$",
+        "precision": 2
+      },
+      "layout": {
+        "x": 9,
+        "y": 3,
+        "width": 3,
+        "height": 3
+      }
+    },
+    {
+      "id": 6,
+      "definition": {
+        "type": "timeseries",
+        "title": "Token Usage by Type",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "sum:vertexai.tokens.input{application:aurelians_closet,$environment} by {endpoint}",
+            "display_type": "area",
+            "style": {
+              "palette": "cool"
+            }
+          },
+          {
+            "q": "sum:vertexai.tokens.output{application:aurelians_closet,$environment} by {endpoint}",
+            "display_type": "area",
+            "style": {
+              "palette": "warm"
+            }
+          }
+        ],
+        "yaxis": {
+          "scale": "linear",
+          "label": "Tokens",
+          "include_zero": true
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 6,
+        "width": 6,
+        "height": 3
+      }
+    },
+    {
+      "id": 7,
+      "definition": {
+        "type": "timeseries",
+        "title": "API Success Rate by Model/Endpoint",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "avg:fibo.api.success_rate{application:aurelians_closet,$environment} by {model,endpoint}",
+            "display_type": "line",
+            "style": {
+              "palette": "green"
+            }
+          }
+        ],
+        "yaxis": {
+          "scale": "linear",
+          "label": "Success Rate",
+          "include_zero": true,
+          "min": "0",
+          "max": "1"
+        },
+        "markers": [
+          {
+            "value": "y = 0.95",
+            "display_type": "error dashed",
+            "label": "SLO Target"
+          }
+        ]
+      },
+      "layout": {
+        "x": 6,
+        "y": 6,
+        "width": 6,
+        "height": 3
+      }
+    },
+    {
+      "id": 8,
+      "definition": {
+        "type": "note",
+        "content": "## 🎯 Section 2: Application Health & SLOs\n\nService-level objectives and overall system health",
+        "background_color": "green",
+        "font_size": "16",
+        "text_align": "center",
+        "show_tick": true,
+        "tick_pos": "50%",
+        "tick_edge": "bottom"
+      },
+      "layout": {
+        "x": 0,
+        "y": 9,
+        "width": 12,
+        "height": 1
+      }
+    },
+    {
+      "id": 9,
+      "definition": {
+        "type": "slo",
+        "title": "Model Response Time SLO",
+        "title_size": "16",
+        "title_align": "left",
+        "view_type": "detail",
+        "slo_id": "slo-1",
+        "show_error_budget": true,
+        "view_mode": "overall",
+        "time_windows": ["7d", "30d", "90d"]
+      },
+      "layout": {
+        "x": 0,
+        "y": 10,
+        "width": 4,
+        "height": 3
+      }
+    },
+    {
+      "id": 10,
+      "definition": {
+        "type": "slo",
+        "title": "API Availability SLO",
+        "title_size": "16",
+        "title_align": "left",
+        "view_type": "detail",
+        "slo_id": "slo-2",
+        "show_error_budget": true,
+        "view_mode": "overall",
+        "time_windows": ["7d", "30d"]
+      },
+      "layout": {
+        "x": 4,
+        "y": 10,
+        "width": 4,
+        "height": 3
+      }
+    },
+    {
+      "id": 11,
+      "definition": {
+        "type": "slo",
+        "title": "Outfit Quality SLO",
+        "title_size": "16",
+        "title_align": "left",
+        "view_type": "detail",
+        "slo_id": "slo-3",
+        "show_error_budget": true,
+        "view_mode": "overall",
+        "time_windows": ["7d", "30d"]
+      },
+      "layout": {
+        "x": 8,
+        "y": 10,
+        "width": 4,
+        "height": 3
+      }
+    },
+    {
+      "id": 12,
+      "definition": {
+        "type": "timeseries",
+        "title": "Request Rate & Error Rate",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "sum:fibo.api.requests{application:aurelians_closet,$environment}.as_rate()",
+            "display_type": "bars",
+            "style": {
+              "palette": "blue"
+            }
+          },
+          {
+            "q": "sum:fibo.api.errors{application:aurelians_closet,$environment}.as_rate()",
+            "display_type": "line",
+            "style": {
+              "palette": "warm"
+            }
+          }
+        ],
+        "yaxis": {
+          "scale": "linear",
+          "label": "Requests/sec",
+          "include_zero": true
+        }
+      },
+      "layout": {
+        "x": 0,
+        "y": 13,
+        "width": 6,
+        "height": 3
+      }
+    },
+    {
+      "id": 13,
+      "definition": {
+        "type": "heatmap",
+        "title": "Geographic Performance Heatmap",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "avg:fibo.generation.duration{application:aurelians_closet,$environment} by {region}",
+            "style": {
+              "palette": "hostmap_blues"
+            }
+          }
+        ]
+      },
+      "layout": {
+        "x": 6,
+        "y": 13,
+        "width": 6,
+        "height": 3
+      }
+    },
+    {
+      "id": 14,
+      "definition": {
+        "type": "note",
+        "content": "## 💎 Section 3: Quality Metrics & Business Impact\n\nOutfit quality scores and business performance indicators",
+        "background_color": "purple",
+        "font_size": "16",
+        "text_align": "center",
+        "show_tick": true,
+        "tick_pos": "50%",
+        "tick_edge": "bottom"
+      },
+      "layout": {
+        "x": 0,
+        "y": 16,
+        "width": 12,
+        "height": 1
+      }
+    },
+    {
+      "id": 15,
+      "definition": {
+        "type": "timeseries",
+        "title": "Outfit Quality Score Trend",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "avg:outfit.generation.quality{application:aurelians_closet,$environment}",
+            "display_type": "line",
+            "style": {
+              "palette": "purple",
+              "line_type": "solid",
+              "line_width": "thick"
+            }
+          }
+        ],
+        "yaxis": {
+          "scale": "linear",
+          "label": "Quality Score",
+          "include_zero": true,
+          "min": "0",
+          "max": "1"
+        },
+        "markers": [
+          {
+            "value": "y = 0.7",
+            "display_type": "error dashed",
+            "label": "Critical Threshold"
+          },
+          {
+            "value": "y = 0.8",
+            "display_type": "ok dashed",
+            "label": "Target Quality"
+          }
+        ]
+      },
+      "layout": {
+        "x": 0,
+        "y": 17,
+        "width": 6,
+        "height": 3
+      }
+    },
+    {
+      "id": 16,
+      "definition": {
+        "type": "query_value",
+        "title": "Average Quality Score (24h)",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "avg:outfit.generation.quality{application:aurelians_closet,$environment}",
+            "aggregator": "avg",
+            "conditional_formats": [
+              {
+                "comparator": ">=",
+                "value": 0.8,
+                "palette": "white_on_green"
+              },
+              {
+                "comparator": ">=",
+                "value": 0.7,
+                "palette": "white_on_yellow"
+              },
+              {
+                "comparator": "<",
+                "value": 0.7,
+                "palette": "white_on_red"
+              }
+            ]
+          }
+        ],
+        "precision": 3
+      },
+      "layout": {
+        "x": 6,
+        "y": 17,
+        "width": 3,
+        "height": 3
+      }
+    },
+    {
+      "id": 17,
+      "definition": {
+        "type": "query_value",
+        "title": "Outfits Generated (24h)",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "sum:outfits.generated{application:aurelians_closet,$environment}",
+            "aggregator": "sum"
+          }
+        ],
+        "autoscale": true,
+        "precision": 0
+      },
+      "layout": {
+        "x": 9,
+        "y": 17,
+        "width": 3,
+        "height": 3
+      }
+    },
+    {
+      "id": 18,
+      "definition": {
+        "type": "toplist",
+        "title": "Top Camera Angles by Usage",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "top(sum:fibo.generation.duration{application:aurelians_closet,$environment} by {camera_angle}.as_count(), 10, 'sum', 'desc')"
+          }
+        ]
+      },
+      "layout": {
+        "x": 0,
+        "y": 20,
+        "width": 4,
+        "height": 3
+      }
+    },
+    {
+      "id": 19,
+      "definition": {
+        "type": "toplist",
+        "title": "Top Lighting Configurations",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "top(sum:fibo.generation.duration{application:aurelians_closet,$environment} by {lighting}.as_count(), 10, 'sum', 'desc')"
+          }
+        ]
+      },
+      "layout": {
+        "x": 4,
+        "y": 20,
+        "width": 4,
+        "height": 3
+      }
+    },
+    {
+      "id": 20,
+      "definition": {
+        "type": "timeseries",
+        "title": "Cost per Outfit vs User Lifetime Value",
+        "title_size": "16",
+        "title_align": "left",
+        "requests": [
+          {
+            "q": "avg:cost_per_outfit{application:aurelians_closet,$environment}",
+            "display_type": "line",
+            "style": {
+              "palette": "warm"
+            }
+          },
+          {
+            "q": "avg:user_lifetime_value{application:aurelians_closet,$environment}",
+            "display_type": "line",
+            "style": {
+              "palette": "cool"
+            }
+          }
+        ],
+        "yaxis": {
+          "scale": "linear",
+          "label": "Value ($)",
+          "include_zero": true
+        }
+      },
+      "layout": {
+        "x": 8,
+        "y": 20,
+        "width": 4,
+        "height": 3
+      }
+    },
+    {
+      "id": 21,
+      "definition": {
+        "type": "note",
+        "content": "## 🚨 Section 4: Detection Rules & Incidents\n\nActive monitors and incident management",
+        "background_color": "red",
+        "font_size": "16",
+        "text_align": "center",
+        "show_tick": true,
+        "tick_pos": "50%",
+        "tick_edge": "bottom"
+      },
+      "layout": {
+        "x": 0,
+        "y": 23,
+        "width": 12,
+        "height": 1
+      }
+    },
+    {
+      "id": 22,
+      "definition": {
+        "type": "manage_status",
+        "title": "Active Monitors Status",
+        "title_size": "16",
+        "title_align": "left",
+        "query": "tag:(application:aurelians_closet)",
+        "sort": "status,asc",
+        "count": 50,
+        "start": 0,
+        "display_format": "countsAndList",
+        "color_preference": "text",
+        "hide_zero_counts": true,
+        "show_last_triggered": true
+      },
+      "layout": {
+        "x": 0,
+        "y": 24,
+        "width": 6,
+        "height": 4
+      }
+    },
+    {
+      "id": 23,
+      "definition": {
+        "type": "alert_graph",
+        "title": "FIBO Performance Degradation Monitor",
+        "title_size": "16",
+        "title_align": "left",
+        "alert_id": "monitor-1",
+        "viz_type": "timeseries"
+      },
+      "layout": {
+        "x": 6,
+        "y": 24,
+        "width": 6,
+        "height": 2
+      }
+    },
+    {
+      "id": 24,
+      "definition": {
+        "type": "alert_graph",
+        "title": "Outfit Quality Degradation Monitor",
+        "title_size": "16",
+        "title_align": "left",
+        "alert_id": "monitor-3",
+        "viz_type": "timeseries"
+      },
+      "layout": {
+        "x": 6,
+        "y": 26,
+        "width": 6,
+        "height": 2
+      }
+    },
+    {
+      "id": 25,
+      "definition": {
+        "type": "event_timeline",
+        "title": "Recent Incidents & Deployments",
+        "title_size": "16",
+        "title_align": "left",
+        "query": "tags:application:aurelians_closet (source:deployment OR source:incident)",
+        "tags_execution": "and"
+      },
+      "layout": {
+        "x": 0,
+        "y": 28,
+        "width": 12,
+        "height": 3
+      }
+    },
+    {
+      "id": 26,
+      "definition": {
+        "type": "note",
+        "content": "## 📋 Quick Links & Runbooks\n\n**Runbooks:**\n- [Performance Troubleshooting](https://docs.company.com/runbooks/fibo-performance)\n- [Quality Degradation Response](https://docs.company.com/runbooks/model-quality)\n- [Incident Response Guide](https://docs.company.com/runbooks/incident-response)\n- [Token Cost Optimization](https://docs.company.com/runbooks/cost-optimization)\n\n**Team Contacts:**\n- AI Engineering: #ai-engineering-alerts\n- SRE Team: #sre-team\n- Quality Engineering: #quality-engineering\n\n**External Resources:**\n- [Vertex AI Status](https://status.cloud.google.com/)\n- [Gemini API Docs](https://cloud.google.com/vertex-ai/docs)\n\n**Datadog Organization:** aurelians-closet-datadog",
+        "background_color": "gray",
+        "font_size": "14",
+        "text_align": "left",
+        "show_tick": false,
+        "has_padding": true
+      },
+      "layout": {
+        "x": 0,
+        "y": 31,
+        "width": 12,
+        "height": 3
+      }
+    }
+  ],
+  "tags": [
+    "application:aurelians_closet",
+    "team:ai-engineering",
+    "llm:vertexai",
+    "service:fibo-generation"
+  ],
+  "created_at": "2025-12-22T00:00:00.000Z",
+  "modified_at": "2025-12-22T00:00:00.000Z"
+}

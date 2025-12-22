@@ -242,6 +242,57 @@ classDiagram
     npm run build
     ```
 
+### **Deployment to Netlify**
+
+The application is configured for easy deployment to Netlify using the included `netlify.toml` file.
+
+**Option 1: Deploy via Netlify CLI**
+```bash
+# Install Netlify CLI
+npm install -g netlify-cli
+
+# Login to Netlify
+netlify login
+
+# Deploy
+netlify deploy --prod
+```
+
+**Option 2: Deploy via Git Integration**
+1. Push your code to GitHub
+2. Go to [Netlify](https://app.netlify.com/)
+3. Click "New site from Git"
+4. Select your repository
+5. Configure environment variables in Netlify UI:
+   - `API_KEY` (Required)
+   - `DATADOG_API_KEY` (Optional)
+   - `DATADOG_APP_KEY` (Optional)
+6. Click "Deploy site"
+
+**Option 3: Deploy via Drag & Drop**
+```bash
+# Build the application
+npm run build
+
+# Upload the 'dist' folder to Netlify
+# Visit https://app.netlify.com/drop
+```
+
+The `netlify.toml` file configures:
+- Build command and output directory
+- SPA routing (redirects)
+- Security headers
+- Asset caching
+- Node.js version
+
+**Environment Variables for Production:**
+Set these in the Netlify UI under Site Settings → Environment Variables:
+- `API_KEY` - Your Gemini API key (Required)
+- `DATADOG_API_KEY` - For monitoring (Optional)
+- `DATADOG_APP_KEY` - For monitoring (Optional)
+- `KAFKA_BROKERS` - For streaming features (Optional)
+- `ELEVENLABS_API_KEY` - For voice features (Optional)
+
 ### **Using the Integrated Services**
 
 See [INTEGRATION_DOCS.md](./INTEGRATION_DOCS.md) for detailed usage examples of all integrated services.
@@ -269,6 +320,51 @@ const response = await unifiedPlatform.processUserRequest({
 console.log('Generated outfit:', response.outfit_spec);
 console.log('Quality score:', response.telemetry.quality_score);
 ```
+
+### **Datadog Observability Setup**
+
+**Datadog Organization:** `aurelians-closet-datadog`
+
+The application includes comprehensive Datadog monitoring with:
+- 5 detection rules (monitors)
+- 4 Service Level Objectives (SLOs)
+- Real-time dashboard with LLM metrics
+- Automated incident management
+
+**Setup Steps:**
+1. Configure Datadog API keys (see environment variables above)
+2. Import Datadog configurations:
+   ```bash
+   # See datadog/README.md for detailed instructions
+   cd datadog
+   # Use Datadog API or UI to import monitors.json, slos.json, dashboard.json
+   ```
+
+**Traffic Generator:**
+Use the included traffic generator to test monitoring and trigger detection rules:
+```bash
+# Normal traffic pattern
+node traffic-generator.js normal
+
+# Trigger specific incidents
+node traffic-generator.js performance     # Performance degradation
+node traffic-generator.js quality         # Quality issues
+node traffic-generator.js token-spike     # Token anomalies
+node traffic-generator.js high-errors     # High error rate
+node traffic-generator.js all-incidents   # Run all scenarios
+```
+
+**View Dashboard:**
+Access the comprehensive observability dashboard at:
+```
+https://app.datadoghq.com/dashboard/aurelians-closet-ai-observability
+```
+
+**Documentation:**
+- [Datadog Configuration Details](./datadog/README.md)
+- [Monitor Definitions](./datadog/monitors.json)
+- [SLO Definitions](./datadog/slos.json)
+- [Dashboard Configuration](./datadog/dashboard.json)
 
 ---
 

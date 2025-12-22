@@ -1,0 +1,135 @@
+{
+  "monitors": [
+    {
+      "id": "monitor-1",
+      "name": "FIBO API Performance Degradation",
+      "type": "metric alert",
+      "query": "avg(last_5m):avg:fibo.generation.duration{application:aurelians_closet} by {camera_angle} > 5000",
+      "message": "## FIBO Generation Performance Alert\n\n**Severity:** High\n\n**Issue:** FIBO generation time exceeding 5-second threshold, indicating potential performance degradation.\n\n### Current State\n- **Metric:** `fibo.generation.duration`\n- **Threshold:** {{threshold}} ms\n- **Current Value:** {{value}} ms\n- **Camera Angle:** {{camera_angle.name}}\n\n### Impact\n- Poor user experience with slow outfit generation\n- Potential API rate limiting or capacity issues\n- Increased infrastructure costs\n\n### Immediate Actions\n1. Check Vertex AI API status and quotas\n2. Review recent deployment changes\n3. Verify model endpoint health\n4. Check for unusual traffic patterns\n\n### Runbook\n- [Performance Troubleshooting Guide](https://docs.company.com/runbooks/fibo-performance)\n- [Vertex AI Status Page](https://status.cloud.google.com/)\n\n### Notifications\n- Slack: #ai-engineering-alerts\n- PagerDuty: AI Engineering Team\n\n@slack-ai-alerts @pagerduty-ai-team",
+      "tags": [
+        "service:aurelians-closet",
+        "team:ai-engineering",
+        "severity:high",
+        "category:performance"
+      ],
+      "options": {
+        "thresholds": {
+          "critical": 5000,
+          "warning": 3000
+        },
+        "notify_no_data": true,
+        "no_data_timeframe": 10,
+        "require_full_window": false,
+        "notify_audit": true,
+        "include_tags": true,
+        "escalation_message": "FIBO performance degradation persists. Escalating to senior AI engineering team.",
+        "locked": false
+      },
+      "priority": 1
+    },
+    {
+      "id": "monitor-2",
+      "name": "Anomalous Token Usage Pattern",
+      "type": "anomaly",
+      "query": "anomalies(avg:vertexai.tokens.total{application:aurelians_closet}, 'agile', 2)",
+      "message": "## Anomalous Token Usage Detected\n\n**Severity:** Medium\n\n**Issue:** Unusual token consumption pattern detected, indicating potential cost anomaly or security issue.\n\n### Current State\n- **Metric:** `vertexai.tokens.total`\n- **Expected Range:** {{expected_range}}\n- **Current Value:** {{value}} tokens\n- **Deviation:** {{deviation}}x from normal\n\n### Potential Causes\n- Unusual user traffic pattern\n- API abuse or attack\n- Bug causing excessive token generation\n- Model parameter misconfiguration\n\n### Impact\n- Increased operational costs\n- Potential budget overrun\n- Possible security breach\n\n### Immediate Actions\n1. Check recent API call patterns and user behavior\n2. Review token usage by endpoint and user segment\n3. Verify API authentication and rate limiting\n4. Analyze recent code changes that might affect token consumption\n5. Check for any automated/bot traffic\n\n### Cost Analysis\n- Current hourly cost: ${{cost_per_hour}}\n- Expected hourly cost: ${{expected_cost}}\n- Anomaly duration: {{duration}}\n\n### Runbook\n- [Token Usage Analysis Guide](https://docs.company.com/runbooks/token-analysis)\n- [Cost Optimization Strategies](https://docs.company.com/runbooks/cost-optimization)\n\n### Notifications\n- Slack: #ai-alerts, #finance-alerts\n\n@slack-ai-alerts @slack-finance-alerts",
+      "tags": [
+        "service:aurelians-closet",
+        "team:ai-engineering",
+        "team:finance",
+        "severity:medium",
+        "category:cost"
+      ],
+      "options": {
+        "thresholds": {
+          "critical": 2,
+          "warning": 1.5
+        },
+        "notify_no_data": false,
+        "require_full_window": false,
+        "notify_audit": true,
+        "include_tags": true,
+        "locked": false
+      },
+      "priority": 2
+    },
+    {
+      "id": "monitor-3",
+      "name": "Outfit Quality Degradation",
+      "type": "metric alert",
+      "query": "avg(last_15m):avg:outfit.generation.quality{application:aurelians_closet} < 0.7",
+      "message": "## Outfit Quality Score Below Threshold\n\n**Severity:** Critical\n\n**Issue:** Generated outfit quality score has fallen below acceptable threshold of 0.7, indicating potential model drift or data issues.\n\n### Current State\n- **Metric:** `outfit.generation.quality`\n- **Threshold:** {{threshold}}\n- **Current Score:** {{value}}\n- **Duration:** {{duration}}\n- **Affected Users:** {{affected_users}}\n\n### Quality Trend\n- Last hour: {{quality_last_hour}}\n- Last 24h: {{quality_last_day}}\n- Decline rate: {{decline_rate}}\n\n### Business Impact\n- User satisfaction at risk\n- Potential increase in churn\n- Brand reputation impact\n- Estimated revenue impact: ${{revenue_impact}}/hour\n\n### Root Cause Investigation\n1. Check for model version changes or rollouts\n2. Verify training data quality\n3. Review generation parameters and prompts\n4. Analyze failed generation attempts\n5. Check Vertex AI model endpoint health\n\n### AI-Specific Context\n- **Model:** gemini-2.5-flash\n- **Generation Parameters:** Review last 100 generations for pattern\n- **Similar Incidents:** Check incident history for previous quality issues\n- **Recent Changes:** Review deployments in last 24h\n\n### Suggested Mitigations\n1. **Immediate:** Enable quality-based fallback to cached high-quality results\n2. **Short-term:** Rollback to previous model version if recent deployment\n3. **Medium-term:** Run full model validation test suite\n4. **Long-term:** Implement automated quality monitoring and auto-rollback\n\n### Runbook\n- [Model Quality Troubleshooting](https://docs.company.com/runbooks/model-quality)\n- [Model Rollback Procedure](https://docs.company.com/runbooks/model-rollback)\n- [Quality Metrics Dashboard](https://app.datadoghq.com/dashboard/quality-metrics)\n\n### Notifications\n- Slack: #ai-engineering-alerts, #quality-engineering\n- PagerDuty: AI Engineering Team (on-call)\n- Email: ai-team@company.com\n\n@slack-ai-alerts @pagerduty-ai-team @quality-engineering",
+      "tags": [
+        "service:aurelians-closet",
+        "team:ai-engineering",
+        "team:quality-engineering",
+        "severity:critical",
+        "category:quality"
+      ],
+      "options": {
+        "thresholds": {
+          "critical": 0.7,
+          "warning": 0.75
+        },
+        "notify_no_data": true,
+        "no_data_timeframe": 20,
+        "require_full_window": true,
+        "notify_audit": true,
+        "include_tags": true,
+        "escalation_message": "Critical quality degradation ongoing. Immediate intervention required. Consider emergency rollback.",
+        "locked": false,
+        "renotify_interval": 30
+      },
+      "priority": 0
+    },
+    {
+      "id": "monitor-4",
+      "name": "High Error Rate Alert",
+      "type": "metric alert",
+      "query": "sum(last_10m):sum:fibo.api.errors{application:aurelians_closet}.as_rate() > 0.05",
+      "message": "## High API Error Rate Detected\n\n**Severity:** High\n\n**Issue:** FIBO API error rate exceeding 5% threshold, indicating service degradation.\n\n### Current State\n- **Metric:** `fibo.api.errors`\n- **Error Rate:** {{value}}%\n- **Threshold:** {{threshold}}%\n- **Total Errors:** {{error_count}}\n- **Duration:** {{duration}}\n\n### Error Breakdown\n- **Model Errors:** {{model_errors}}%\n- **API Timeouts:** {{timeout_errors}}%\n- **Quota Exceeded:** {{quota_errors}}%\n- **Other:** {{other_errors}}%\n\n### Impact\n- Degraded user experience\n- Failed outfit generations\n- Potential revenue loss: ${{revenue_impact}}/hour\n- {{affected_users}} users affected\n\n### Immediate Actions\n1. Check Vertex AI API status and health\n2. Review error logs for common patterns\n3. Verify API quotas and rate limits\n4. Check recent deployments or configuration changes\n5. Monitor infrastructure resources (CPU, memory, network)\n\n### Runbook\n- [Error Rate Troubleshooting](https://docs.company.com/runbooks/error-handling)\n- [Vertex AI Integration Guide](https://docs.company.com/integrations/vertexai)\n\n### Notifications\n- Slack: #ai-engineering-alerts, #sre-team\n- PagerDuty: SRE Team\n\n@slack-ai-alerts @pagerduty-sre-team",
+      "tags": [
+        "service:aurelians-closet",
+        "team:sre",
+        "team:ai-engineering",
+        "severity:high",
+        "category:availability"
+      ],
+      "options": {
+        "thresholds": {
+          "critical": 0.05,
+          "warning": 0.02
+        },
+        "notify_no_data": false,
+        "require_full_window": false,
+        "notify_audit": true,
+        "include_tags": true,
+        "escalation_message": "High error rate persisting. Service availability at risk.",
+        "locked": false
+      },
+      "priority": 1
+    },
+    {
+      "id": "monitor-5",
+      "name": "Model Response Time SLO Breach",
+      "type": "slo alert",
+      "query": "slo:model_response_time_slo{application:aurelians_closet}",
+      "message": "## Model Response Time SLO Breach\n\n**Severity:** High\n\n**Issue:** Model response time SLO has been breached. The 95th percentile response time exceeds the 3-second target.\n\n### SLO Status\n- **Target:** 95% of requests < 3 seconds\n- **Current Performance:** {{slo_status}}%\n- **Error Budget Remaining:** {{error_budget}}%\n- **Time Window:** Last 30 days\n\n### Impact\n- SLO breach may trigger customer escalations\n- User experience degraded for {{affected_percentage}}% of users\n- Error budget consumption rate: {{burn_rate}}x\n\n### Actions Required\n1. Review recent performance changes\n2. Analyze slow request patterns\n3. Check infrastructure scaling\n4. Consider temporary capacity increase\n5. Review and optimize model parameters\n\n### Runbook\n- [SLO Management Guide](https://docs.company.com/runbooks/slo-management)\n- [Performance Optimization](https://docs.company.com/runbooks/performance-optimization)\n\n@slack-ai-alerts @sre-team",
+      "tags": [
+        "service:aurelians-closet",
+        "team:sre",
+        "severity:high",
+        "category:slo"
+      ],
+      "options": {
+        "thresholds": {
+          "critical": 95
+        },
+        "notify_no_data": false,
+        "include_tags": true,
+        "locked": false
+      },
+      "priority": 1
+    }
+  ]
+}
