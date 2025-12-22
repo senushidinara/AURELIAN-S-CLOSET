@@ -22,7 +22,18 @@
  *   all-incidents   - Run all incident scenarios sequentially
  */
 
-import { datadogMonitor } from './services/datadogService.js';
+// Mock Datadog service for standalone execution
+const datadogMonitor = {
+  async streamLLMTelemetry(data) {
+    console.log('[DATADOG SIMULATION] Streaming telemetry:', {
+      endpoint: data.endpoint,
+      latency: `${data.generation_ms}ms`,
+      quality: data.quality_score?.toFixed(2),
+      tokens: data.input_tokens + data.output_tokens,
+      success: data.success
+    });
+  }
+};
 
 // Configuration
 const CONFIG = {
@@ -351,7 +362,8 @@ async function main() {
 }
 
 // Handle script execution
-if (import.meta.url === `file://${process.argv[1]}`) {
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+if (isMainModule) {
   main().catch(error => {
     console.error('Fatal error:', error);
     process.exit(1);
