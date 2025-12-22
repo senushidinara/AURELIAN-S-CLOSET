@@ -1,0 +1,184 @@
+{
+  "slos": [
+    {
+      "id": "slo-1",
+      "name": "Model Response Time SLO",
+      "description": "95% of FIBO outfit generation requests should complete within 3 seconds",
+      "type": "metric",
+      "target_threshold": 95.0,
+      "warning_threshold": 97.0,
+      "timeframe": "30d",
+      "type_id": 0,
+      "query": {
+        "numerator": "sum:fibo.generation.duration{application:aurelians_closet,success:true}.as_count() - sum:fibo.generation.duration{application:aurelians_closet,success:true,duration:>3000}.as_count()",
+        "denominator": "sum:fibo.generation.duration{application:aurelians_closet,success:true}.as_count()"
+      },
+      "tags": [
+        "service:aurelians-closet",
+        "team:ai-engineering",
+        "category:performance"
+      ],
+      "monitor_ids": [],
+      "thresholds": [
+        {
+          "target": 95.0,
+          "warning": 97.0,
+          "timeframe": "30d"
+        },
+        {
+          "target": 95.0,
+          "warning": 97.0,
+          "timeframe": "7d"
+        }
+      ],
+      "created_at": "2025-12-22T00:00:00.000Z",
+      "modified_at": "2025-12-22T00:00:00.000Z",
+      "monitor_tags": [],
+      "groups": [
+        "camera_angle",
+        "model"
+      ]
+    },
+    {
+      "id": "slo-2",
+      "name": "API Availability SLO",
+      "description": "99.9% of API requests should succeed (no errors)",
+      "type": "metric",
+      "target_threshold": 99.9,
+      "warning_threshold": 99.95,
+      "timeframe": "30d",
+      "type_id": 0,
+      "query": {
+        "numerator": "sum:fibo.api.success{application:aurelians_closet}.as_count()",
+        "denominator": "sum:fibo.api.total_requests{application:aurelians_closet}.as_count()"
+      },
+      "tags": [
+        "service:aurelians-closet",
+        "team:sre",
+        "category:availability"
+      ],
+      "monitor_ids": [],
+      "thresholds": [
+        {
+          "target": 99.9,
+          "warning": 99.95,
+          "timeframe": "30d"
+        },
+        {
+          "target": 99.9,
+          "warning": 99.95,
+          "timeframe": "7d"
+        }
+      ],
+      "created_at": "2025-12-22T00:00:00.000Z",
+      "modified_at": "2025-12-22T00:00:00.000Z",
+      "monitor_tags": [],
+      "groups": [
+        "endpoint",
+        "region"
+      ]
+    },
+    {
+      "id": "slo-3",
+      "name": "Outfit Quality SLO",
+      "description": "90% of generated outfits should have a quality score above 0.8",
+      "type": "metric",
+      "target_threshold": 90.0,
+      "warning_threshold": 92.0,
+      "timeframe": "30d",
+      "type_id": 0,
+      "query": {
+        "numerator": "sum:outfit.generation.quality{application:aurelians_closet,quality:>0.8}.as_count()",
+        "denominator": "sum:outfit.generation.quality{application:aurelians_closet}.as_count()"
+      },
+      "tags": [
+        "service:aurelians-closet",
+        "team:quality-engineering",
+        "category:quality"
+      ],
+      "monitor_ids": [],
+      "thresholds": [
+        {
+          "target": 90.0,
+          "warning": 92.0,
+          "timeframe": "30d"
+        },
+        {
+          "target": 90.0,
+          "warning": 92.0,
+          "timeframe": "7d"
+        }
+      ],
+      "created_at": "2025-12-22T00:00:00.000Z",
+      "modified_at": "2025-12-22T00:00:00.000Z",
+      "monitor_tags": [],
+      "groups": [
+        "occasion",
+        "user_segment"
+      ]
+    },
+    {
+      "id": "slo-4",
+      "name": "Token Cost Efficiency SLO",
+      "description": "Average cost per successful outfit generation should not exceed $0.10",
+      "type": "metric",
+      "target_threshold": 95.0,
+      "warning_threshold": 97.0,
+      "timeframe": "30d",
+      "type_id": 0,
+      "query": {
+        "numerator": "sum:outfit.generation.cost_efficient{application:aurelians_closet,cost:<=0.10}.as_count()",
+        "denominator": "sum:outfit.generation.cost{application:aurelians_closet}.as_count()"
+      },
+      "tags": [
+        "service:aurelians-closet",
+        "team:finance",
+        "team:ai-engineering",
+        "category:cost"
+      ],
+      "monitor_ids": [],
+      "thresholds": [
+        {
+          "target": 95.0,
+          "warning": 97.0,
+          "timeframe": "30d"
+        }
+      ],
+      "created_at": "2025-12-22T00:00:00.000Z",
+      "modified_at": "2025-12-22T00:00:00.000Z",
+      "monitor_tags": [],
+      "groups": [
+        "model",
+        "endpoint"
+      ]
+    }
+  ],
+  "error_budget_policies": [
+    {
+      "name": "Standard Error Budget Policy",
+      "description": "Standard error budget policy for all SLOs",
+      "burn_rate_thresholds": [
+        {
+          "burn_rate": 14.4,
+          "timeframe": "1h",
+          "severity": "critical"
+        },
+        {
+          "burn_rate": 6.0,
+          "timeframe": "6h",
+          "severity": "high"
+        },
+        {
+          "burn_rate": 3.0,
+          "timeframe": "24h",
+          "severity": "medium"
+        },
+        {
+          "burn_rate": 1.0,
+          "timeframe": "72h",
+          "severity": "low"
+        }
+      ]
+    }
+  ]
+}
